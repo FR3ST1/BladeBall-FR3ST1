@@ -2,78 +2,86 @@
 local soundID = "rbxassetid://163800183"  -- Çığlık sesi ID'si
 local decalID = "rbxassetid://14836741393"  -- Korkunç yüz ID'si
 
--- Tüm oyunculara ses çalınması
+-- GUI paneli oluşturuluyor
 game.Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        -- Çığlık sesini tüm oyuncularda çal
-        local sound = Instance.new("Sound")
-        sound.SoundId = soundID
-        sound.Parent = character:WaitForChild("Head")  -- Sesin kafa kısmında çalmasını sağla
-        sound:Play()  -- Ses çal
-        
-        -- Korkunç yüz (Decal) eklenmesi
-        local decal = Instance.new("Decal")
-        decal.Texture = decalID
-        decal.Parent = character:WaitForChild("Head")  -- Kafaya decal ekle
-        wait(1)  -- 1 saniye sonra decal'ı kaldır
-        decal:Destroy()
-    end)
-end)
-
--- Avatarınızı ekranda spamlamak
-game:GetService("RunService").Heartbeat:Connect(function()
-    -- Ekranda her oyuncuya bu görseli spamla
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        local sticker = Instance.new("Decal")  -- Sticker oluştur
-        sticker.Texture = decalID  -- Korkunç resim buraya ekleniyor
-        sticker.Parent = game.Workspace  -- Bunu oyun dünyasına ekle
-        sticker.Position = Vector3.new(math.random(-50, 50), math.random(50, 100), math.random(-50, 50))  -- Ekranın rastgele yerlerinde görünmesini sağlar
-        wait(0.5)  -- Her yarım saniyede bir yeni sticker oluşturulur
-    end
-end)
-
--- Blokların düşmesi
-game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        -- Düşme etkisini ekle
-        local part = Instance.new("Part")  -- Yeni bir parça oluştur
-        part.Size = Vector3.new(5, 1, 5)  -- Parçanın boyutlarını ayarla
-        part.Position = Vector3.new(math.random(-50, 50), 100, math.random(-50, 50))  -- Yüksekten düşmesini sağla
-        part.Anchored = false  -- Parçanın düşmesini sağla
-        part.Parent = game.Workspace
-        wait(2)  -- 2 saniye sonra düşen blok
-        part:Destroy()  -- Blok düştükten sonra yok olsun
-    end)
-end)
-
--- Oyuncuları uçurma
-game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        local bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Kuvveti ayarla
-        bodyVelocity.Velocity = Vector3.new(0, 50, 0)  -- Yukarıya doğru uçur
-        bodyVelocity.Parent = character:WaitForChild("HumanoidRootPart")
-        wait(2)
-        bodyVelocity:Destroy()  -- 2 saniye sonra uçurmayı durdur
-    end)
-end)
-
--- Chat Spam (Mesaj spam)
-game:GetService("Chat"):Chat(game.Players.LocalPlayer.Character, "FR3ST1 JOINED THE GAME")  -- "FR3ST1" ismi buraya eklenmiş
-
--- FR3ST1 Paneli Görüntüleme (Tüm oyuncular için)
-game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        -- Ekranda "FR3ST1" ismi herkes için gösterilecek
+        -- Panel GUI'si
         local playerGui = player:WaitForChild("PlayerGui")
         local screenGui = Instance.new("ScreenGui", playerGui)  -- Yeni bir GUI (ekran paneli) oluşturuyoruz
-        local textLabel = Instance.new("TextLabel")  -- TextLabel (yazı etiketi) oluştur
-        textLabel.Parent = screenGui  -- GUI'ye ekle
-        textLabel.Text = "FR3ST1"  -- Panelde görünen yazı
-        textLabel.TextSize = 40  -- Yazı büyüklüğü
-        textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Kırmızı renk
-        textLabel.Position = UDim2.new(0.5, -50, 0.1, 0)  -- Ortada ve üst kısımda
-        textLabel.Size = UDim2.new(0, 100, 0, 50)  -- Boyutlandırma
-        textLabel.BackgroundTransparency = 1  -- Arka planı şeffaf yap
+        screenGui.Name = "TrollPanel"
+
+        -- Panel Arkaplanı
+        local panelBackground = Instance.new("Frame", screenGui)
+        panelBackground.Size = UDim2.new(0, 400, 0, 300)
+        panelBackground.Position = UDim2.new(0.5, -200, 0.5, -150)
+        panelBackground.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        panelBackground.BackgroundTransparency = 0.5
+
+        -- Başlık
+        local titleLabel = Instance.new("TextLabel", panelBackground)
+        titleLabel.Text = "FR3ST1 TROLL PANEL"
+        titleLabel.Size = UDim2.new(1, 0, 0, 50)
+        titleLabel.TextSize = 30
+        titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        titleLabel.BackgroundTransparency = 1
+        titleLabel.TextAlign = Enum.TextXAlignment.Center
+
+        -- Çığlık Sesi Butonu
+        local screamButton = Instance.new("TextButton", panelBackground)
+        screamButton.Text = "Çığlık Sesi Çal"
+        screamButton.Size = UDim2.new(0, 150, 0, 50)
+        screamButton.Position = UDim2.new(0.5, -75, 0.3, 0)
+        screamButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        screamButton.TextSize = 20
+        screamButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+        screamButton.MouseButton1Click:Connect(function()
+            -- Çığlık sesini çal
+            local sound = Instance.new("Sound")
+            sound.SoundId = soundID
+            sound.Parent = character:WaitForChild("Head")  -- Sesin kafa kısmında çalmasını sağla
+            sound:Play()  -- Ses çal
+        end)
+
+        -- Korkunç Yüz Butonu
+        local decalButton = Instance.new("TextButton", panelBackground)
+        decalButton.Text = "Korkunç Yüz Göster"
+        decalButton.Size = UDim2.new(0, 150, 0, 50)
+        decalButton.Position = UDim2.new(0.5, -75, 0.5, 0)
+        decalButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+        decalButton.TextSize = 20
+        decalButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+        decalButton.MouseButton1Click:Connect(function()
+            -- Korkunç yüz ekle
+            local decal = Instance.new("Decal")
+            decal.Texture = decalID
+            decal.Parent = character:WaitForChild("Head")  -- Kafaya decal ekle
+            wait(1)  -- 1 saniye sonra decal'ı kaldır
+            decal:Destroy()
+        end)
+
+        -- Avatarınızı Ekra Geçici Olarak Spamlamak Butonu
+        local spamButton = Instance.new("TextButton", panelBackground)
+        spamButton.Text = "Avatar Spamla"
+        spamButton.Size = UDim2.new(0, 150, 0, 50)
+        spamButton.Position = UDim2.new(0.5, -75, 0.7, 0)
+        spamButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        spamButton.TextSize = 20
+        spamButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+        spamButton.MouseButton1Click:Connect(function()
+            -- Avatar spamla
+            game:GetService("RunService").Heartbeat:Connect(function()
+                -- Ekranda her oyuncuya bu görseli spamla
+                for _, player in ipairs(game.Players:GetPlayers()) do
+                    local sticker = Instance.new("Decal")  -- Sticker oluştur
+                    sticker.Texture = decalID  -- Korkunç resim buraya ekleniyor
+                    sticker.Parent = game.Workspace  -- Bunu oyun dünyasına ekle
+                    sticker.Position = Vector3.new(math.random(-50, 50), math.random(50, 100), math.random(-50, 50))  -- Ekranın rastgele yerlerinde görünmesini sağlar
+                    wait(0.5)  -- Her yarım saniyede bir yeni sticker oluşturulur
+                end
+            end)
+        end)
     end)
 end)
