@@ -1,104 +1,122 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local Lighting = game:GetService("Lighting")
-local Workspace = game:GetService("Workspace")
+-- ServerScriptService içinde bir Script
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        
+        -- Panelin oluşturulması (siyah panel)
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Parent = player:WaitForChild("PlayerGui")
 
--- GUI Oluştur
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "FR3ST1_GUI"
+        -- Siyah paneli oluştur
+        local blackPanel = Instance.new("Frame")
+        blackPanel.Parent = screenGui
+        blackPanel.Size = UDim2.new(0.5, 0, 0.5, 0)  -- Panel boyutu
+        blackPanel.Position = UDim2.new(0.25, 0, 0.25, 0)  -- Panel konumu
+        blackPanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        blackPanel.BackgroundTransparency = 0.5
+        blackPanel.ZIndex = 10
+        
+        -- Panel üzerindeki başlık metni
+        local panelText = Instance.new("TextLabel")
+        panelText.Parent = blackPanel
+        panelText.Size = UDim2.new(1, 0, 0.2, 0)
+        panelText.Position = UDim2.new(0, 0, 0, 0)
+        panelText.Text = "Korkunç Efektler"
+        panelText.TextSize = 30
+        panelText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        panelText.TextStrokeTransparency = 0.5
+        panelText.TextAlign = Enum.TextAlign.Center
+        panelText.BackgroundTransparency = 1
+        
+        -- Jumpscare Butonu
+        local jumpscareButton = Instance.new("TextButton")
+        jumpscareButton.Parent = blackPanel
+        jumpscareButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+        jumpscareButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+        jumpscareButton.Text = "Jumpscare Başlat"
+        jumpscareButton.TextSize = 20
+        jumpscareButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        jumpscareButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        jumpscareButton.BackgroundTransparency = 0.5
+        jumpscareButton.ZIndex = 20
+        
+        -- Sticker Spam Butonu
+        local stickerSpamButton = Instance.new("TextButton")
+        stickerSpamButton.Parent = blackPanel
+        stickerSpamButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+        stickerSpamButton.Position = UDim2.new(0.1, 0, 0.55, 0)
+        stickerSpamButton.Text = "Sticker Spam Başlat"
+        stickerSpamButton.TextSize = 20
+        stickerSpamButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        stickerSpamButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        stickerSpamButton.BackgroundTransparency = 0.5
+        stickerSpamButton.ZIndex = 20
+        
+        -- Chat Spam Butonu
+        local chatSpamButton = Instance.new("TextButton")
+        chatSpamButton.Parent = blackPanel
+        chatSpamButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+        chatSpamButton.Position = UDim2.new(0.1, 0, 0.8, 0)
+        chatSpamButton.Text = "Chat Spam Başlat"
+        chatSpamButton.TextSize = 20
+        chatSpamButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        chatSpamButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+        chatSpamButton.BackgroundTransparency = 0.5
+        chatSpamButton.ZIndex = 20
+        
+        -- 1. Jumpscare Efektini Tetikleyen Fonksiyon
+        jumpscareButton.MouseButton1Click:Connect(function()
+            -- Jumpscare görselini yarat
+            local jumpscare = Instance.new("ImageLabel")
+            jumpscare.Parent = blackPanel
+            jumpscare.Size = UDim2.new(1, 0, 0.9, 0)
+            jumpscare.Position = UDim2.new(0, 0, 0.1, 0)
+            jumpscare.BackgroundTransparency = 1
+            jumpscare.Image = "rbxassetid://14836747649"  -- Verdiğiniz decal ID'sini kullandık
+            jumpscare.ZIndex = 10  -- Görseli ön planda tutmak için
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 220, 0, 240)
-frame.Position = UDim2.new(0, 20, 0.5, -120)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BorderSizePixel = 0
+            -- Çığlık sesi ekle
+            local screamSound = Instance.new("Sound")
+            screamSound.SoundId = "rbxassetid://1833835660"  -- Korkunç çığlık sesi
+            screamSound.Volume = 1  -- Sesin yüksekliği
+            screamSound.Parent = character
+            screamSound:Play()
 
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "FR3ST1 TROLL PANEL"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.BackgroundTransparency = 1
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 18
-
-local function createButton(text, posY, callback)
-	local button = Instance.new("TextButton", frame)
-	button.Size = UDim2.new(1, -20, 0, 40)
-	button.Position = UDim2.new(0, 10, 0, posY)
-	button.Text = text
-	button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-	button.TextColor3 = Color3.fromRGB(255, 255, 255)
-	button.Font = Enum.Font.SourceSans
-	button.TextSize = 18
-	button.MouseButton1Click:Connect(callback)
-end
-
--- 1. Sticker Spam
-local function spamStickers()
-	local char = player.Character or player.CharacterAdded:Wait()
-	for i = 1, 5 do
-		local clone = char:Clone()
-		clone.Parent = workspace
-		for _, p in ipairs(clone:GetDescendants()) do
-			if p:IsA("BasePart") then
-				p.Anchored = true
-				p.CanCollide = false
-			end
-		end
-		local rayOrigin = char:FindFirstChild("Head").Position
-		local rayDirection = Vector3.new(math.random(-50,50), math.random(-10,10), math.random(-50,50))
-		local raycastParams = RaycastParams.new()
-		raycastParams.FilterDescendantsInstances = {char}
-		raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-		local result = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
-		if result and result.Instance then
-			clone:SetPrimaryPartCFrame(CFrame.new(result.Position + result.Normal * 0.5) * CFrame.Angles(0, math.rad(math.random(360)), 0))
-		end
-	end
-end
-
--- 2. Jumpscare
-local function jumpscare()
-	local img = Instance.new("ImageLabel", gui)
-	img.Size = UDim2.new(1, 0, 1, 0)
-	img.Image = "rbxassetid://11254794387"
-	img.BackgroundTransparency = 1
-
-	local sound = Instance.new("Sound", Workspace)
-	sound.SoundId = "rbxassetid://4590657391"
-	sound.Volume = 10
-	sound:Play()
-
-	task.delay(3, function()
-		img:Destroy()
-	end)
-end
-
--- 3. Map Düşür
-local function crashMap()
-	for _, part in ipairs(Workspace:GetDescendants()) do
-		if part:IsA("BasePart") and part.Anchored and not part:IsDescendantOf(player.Character) then
-			part.Anchored = false
-		end
-	end
-end
-
--- 4. Fake Ban Mesajı
-local function fakeBan()
-	local banGui = Instance.new("TextLabel", gui)
-	banGui.Size = UDim2.new(0.6, 0, 0.3, 0)
-	banGui.Position = UDim2.new(0.2, 0, 0.35, 0)
-	banGui.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-	banGui.Text = "You have been banned by Tubers_93"
-	banGui.TextColor3 = Color3.new(1, 1, 1)
-	banGui.TextSize = 24
-	banGui.Font = Enum.Font.SourceSansBold
-	wait(4)
-	banGui:Destroy()
-end
-
--- Butonları GUI’ye ekle
-createButton("Sticker Spam", 40, spamStickers)
-createButton("Jumpscare", 90, jumpscare)
-createButton("Map Düşür", 140, crashMap)
-createButton("Fake Ban", 190, fakeBan)
+            -- Görseli 1 saniye sonra kaldır
+            wait(1)
+            jumpscare:Destroy()
+        end)
+        
+        -- 2. Sticker Spam Efektini Tetikleyen Fonksiyon
+        stickerSpamButton.MouseButton1Click:Connect(function()
+            -- Stickerları her duvara yerleştirmek için
+            while true do
+                -- Her oyuncu için Sticker ekle
+                for _, p in pairs(game.Players:GetPlayers()) do
+                    if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        local sticker = Instance.new("BillboardGui")
+                        sticker.Parent = p.Character.HumanoidRootPart
+                        sticker.Size = UDim2.new(0, 100, 0, 100)
+                        sticker.Adornee = p.Character.HumanoidRootPart
+                        sticker.AlwaysOnTop = true  -- Her zaman görünür kıl
+                        local img = Instance.new("ImageLabel")
+                        img.Parent = sticker
+                        img.Size = UDim2.new(1, 0, 1, 0)
+                        img.Image = "rbxassetid://14836747649"  -- Sticker görseli için asset ID'sini buraya ekleyin
+                    end
+                end
+                wait(1)  -- Her saniye bir sticker spawn olacak
+            end
+        end)
+        
+        -- 3. Chat Spam Efektini Tetikleyen Fonksiyon
+        chatSpamButton.MouseButton1Click:Connect(function()
+            -- Spam chat başlat (herkes için geçerli)
+            while true do
+                for _, p in pairs(game.Players:GetPlayers()) do
+                    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("FR3ST1 JOINED THE GAME", "All")
+                end
+                wait(0.5)  -- Her yarım saniyede bir mesaj gönderecek
+            end
+        end)
+    end)
+end)
